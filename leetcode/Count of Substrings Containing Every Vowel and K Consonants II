@@ -1,0 +1,36 @@
+class Solution(object):
+    def countOfSubstrings(self, word, k):
+        low=mid=0
+        vow_count = {'a':0,'e':0,'i':0,'o':0,'u':0}
+        con_count = count = 0
+
+        def all_vowels():
+            return all(vow_count[i]>0 for i in vow_count)
+
+        for high in range(len(word)):
+            if word[high] in vow_count:
+                vow_count[word[high]] += 1
+            else:
+                con_count += 1
+            
+            # adjust left pointer
+            while con_count > k:
+                if word[low] not in vow_count:
+                    con_count -= 1
+                elif low>=mid:
+                    vow_count[word[low]] -= 1
+                low+=1
+
+            if con_count != k or not all_vowels():
+                continue
+            # adust mid pointer
+            mid = max(low,mid)
+            while word[mid] in vow_count:
+                if vow_count[word[mid]]==1:
+                    break
+                vow_count[word[mid]]-=1
+                mid+=1
+
+            count += mid-low+1
+
+        return count
